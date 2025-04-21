@@ -19,6 +19,17 @@ This project demonstrates a serverless API built using AWS Lambda, Python, and M
 
 📊 Structured JSON response: Clean and structured responses make the data easily consumable for frontend applications or other APIs.
 
+ ## 🧳 Prerequisites
+ 
+   
+  AWS Account with access to EC2, S3, Lambda, IAM
+
+  A MariaDB database running on an EC2 instance
+
+  Python 3.11 environment on the EC2 instance
+
+  IAM roles with appropriate policies
+
 
 ## 🧱 Database Table Structure
 The vehicle_records table includes the following columns:
@@ -83,6 +94,8 @@ date_of_first_registration was initially included but later removed to simplify 
      "insurance_details": "Takaful Co. - Valid until 2025-05-31",
      "inspection_status": "Passed"
      }
+     
+
 
 ### 🛠️ Database Setup with MariaDB
   Follow these steps to set up your MariaDB database for the Vehicle Fitness Test API:
@@ -147,15 +160,6 @@ Follow the prompts to set a root password and secure your installation.
 
 ## 🚀 Deployment Instructions
  This section outlines the end-to-end process for deploying the Vehicle Fitness Test API on AWS using Lambda, S3, and EC2.
-
-### 🧳 Prerequisites
- AWS Account with access to EC2, S3, Lambda, IAM
-
- A MariaDB database running on an EC2 instance
-
- Python 3.11 environment on the EC2 instance
-
- IAM roles with appropriate policies
 
 ### 📦 Create the Deployment Package
 1. create requirements.txt file and add necessary modules
