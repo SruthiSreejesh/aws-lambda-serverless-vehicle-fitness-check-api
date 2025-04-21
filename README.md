@@ -77,7 +77,8 @@ date_of_first_registration was initially included but later removed to simplify 
 
  If no match is found, a 404 Not Found message is returned.
 
- ###  ✅ Example API Usage
+###  ✅ Example API Usage
+ 
 #### Endpoint:
     https://<lambda-function-url>/<owner_id>
 
@@ -95,7 +96,6 @@ date_of_first_registration was initially included but later removed to simplify 
      "inspection_status": "Passed"
      }
      
-
 
 ### 🛠️ Database Setup with MariaDB
   Follow these steps to set up your MariaDB database for the Vehicle Fitness Test API:
@@ -163,18 +163,22 @@ Follow the prompts to set a root password and secure your installation.
 
 ### 📦 Create the Deployment Package
 1. create requirements.txt file and add necessary modules
-    vim requirements.txt
-   cat requirements.txt
+
+       vim requirements.txt
+       cat requirements.txt
    mysql-connector-python
    
 3. Install dependencies locally (inside the EC2 instance):
-    pip install -r requirements.txt -t .
+   
+       pip3 install -r requirements.txt --target .
 
-4. Add your Lambda handler script:
-    vim lambda_function.py
+5. Add your Lambda handler script:
+   
+       vim lambda_function.py
 
-5. Zip all files for deployment:
-    zip -r lambda_function.zip .
+7. Zip all files for deployment:
+   
+       zip -r lambda_function.zip .
 
 
 ### 📁 Project Structure on EC2
@@ -227,7 +231,7 @@ drwxr-xr-x 3 user1 user1     4096 Apr 21 07:29 mysql_connector_python-9.3.0.dist
 
  4. Provide the S3 URL of the uploaded ZIP file.
 
- 5. Under Runtime, select Python 3.12.
+ 5. Under Runtime, select Python 3.11.
 
  6. Set Environment Variables:
 
