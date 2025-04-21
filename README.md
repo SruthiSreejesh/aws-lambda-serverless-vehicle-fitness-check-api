@@ -168,22 +168,105 @@ Follow the prompts to set a root password and secure your installation.
        cat requirements.txt
    mysql-connector-python
    
-3. Install dependencies locally (inside the EC2 instance):
+2. Install dependencies locally (inside the EC2 instance):
    
        pip3 install -r requirements.txt --target .
 
-5. Add your Lambda handler script:
+3. Create your Lambda handler script:
    
        vim lambda_function.py
-
-7. Zip all files for deployment:
    
+   Add the below code
+
+### 🧠 Lambda Function Code
+
+```python
+import json
+import mysql.connector
+import os
+from datetime import date, datetime
+
+def convert_dates(obj):
+    """Convert date/datetime objects to ISO format strings."""
+    for key, value in obj.items():
+        if isinstance(value, (date, datetime)):
+            obj[key] = value.isoformat()
+    return obj
+
+def lambda_handler(event, context):
+
+    owner_id = event['rawPath'].strip('/')
+
+    print(f"Received event: {json.dumps(event)}")
+    print(f"Extracted owner_id: {owner_id}")
+
+    db_host = os.getenv('DB_HOST')
+    db_user = os.getenv('DB_USER')
+    db_password = os.getenv('DB_PASSWORD')
+    db_database = os.getenv('DB_DATABASE')
+
+    try:
+        print(f"Connecting to DB: {db_host}, {db_user}, {db_database}")
+
+        db = mysql.connector.connect(
+            host=db_host,
+            user=db_user,
+            password=db_password,
+            database=db_database
+        )
+
+        cursor = db.cursor(dictionary=True)
+
+        query = "SELECT * FROM vehicle_records WHERE owner_id = %s"
+        cursor.execute(query, (owner_id,))
+        vehicle = cursor.fetchone()
+
+        db.close()
+
+        if vehicle:
+            # Convert date fields to string
+            vehicle = convert_dates(vehicle)
+
+            return {
+                'statusCode': 200,
+                'headers': {'Content-Type': 'application/json'},
+                'body': json.dumps(vehicle)
+            }
+        else:
+            return {
+                'statusCode': 404,
+                'headers': {'Content-Type': 'application/json'},
+                'body': json.dumps({'message': f'Owner with ID {owner_id} not found'})
+            }
+
+    except mysql.connector.Error as error:
+        print(f"Database connection failed: {error}")
+        return {
+            'statusCode': 500,
+            'headers': {'Content-Type': 'application/json'},
+            'body': json.dumps({'message': f'Database connection failed: {error}'})
+        }
+
+    except Exception as e:
+        print(f"Unexpected error: {str(e)}")
+        return {
+            'statusCode': 500,
+            'headers': {'Content-Type': 'application/json'},
+            'body': json.dumps({'message': str(e)})
+        }
+```
+
+4. Zip all files for deployment:
+
        zip -r lambda_function.zip .
 
 
 ### 📁 Project Structure on EC2
 
+Now check the Project Structure on EC2:
+
     ls -ltr
+The project directory will include the following files and folders
 
 total 57024
 
@@ -208,7 +291,7 @@ drwxr-xr-x 3 user1 user1     4096 Apr 21 07:29 mysql_connector_python-9.3.0.dist
  All dependencies listed in requirements.txt, including the mysql-connector-python module required for connecting to the MariaDB data.
 
 
-## ☁️ Upload to S3 Bucket from EC2
+## ☁️ Upload the zip package to S3 Bucket from EC2
  The EC2 instance is granted permissions to upload directly to S3 without using AWS CLI by assigning it a proper IAM role.
 
 ### ✅ IAM Role Required for EC2 Instance:
